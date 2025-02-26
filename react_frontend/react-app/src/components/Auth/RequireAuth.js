@@ -20,7 +20,7 @@ const RequireAuth = () => {
                     setIsAuthenticated(true);
                 } else {
                     setIsAuthenticated(false);
-                    localStorage.removeItem("token"); // 移除無效 token
+                    localStorage.removeItem("access_token"); // 移除無效 token
                 }
             } catch (error) {
                 console.error("Token 驗證失敗:", error);

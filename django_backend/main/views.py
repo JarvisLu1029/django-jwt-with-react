@@ -8,8 +8,12 @@ from rest_framework.permissions import IsAuthenticated
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_info(request):
-    return Response({
+    info = {
         'id': request.user.id,
         'username': request.user.username,
         'email': request.user.email,
-    })
+    }
+
+    print(info)
+
+    return Response(info)

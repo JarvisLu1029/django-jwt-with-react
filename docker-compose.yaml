@@ -14,7 +14,7 @@ services:
       - web-net
     stdin_open: true
     tty: true
-    # command: bash -c "python manage.py runserver 0.0.0.0:80"
+    # command: bash -c "python manage.py runserver 0.0.0.0:8000"
 
   react_frontend:
     build:
@@ -23,15 +23,15 @@ services:
     image: react_frontend:latest
     container_name: react_frontend
     volumes:
-      - ./react_frontend/:/app
+      - ./react_frontend:/app
     ports:
       - 3000:3000
-    working_dir: /app
+    working_dir: /app/react-app
     networks:
       - web-net
     stdin_open: true
     tty: true
-    # command: bash -c "npm start"
+    command: bash -c "npm start"
 
 networks:
   web-net:
