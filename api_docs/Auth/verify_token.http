@@ -1,0 +1,4 @@
+GET /auth/verify_token
+Host: localhost:8000
+Authorization: Bearer <Token>
+Content-Type: application/json

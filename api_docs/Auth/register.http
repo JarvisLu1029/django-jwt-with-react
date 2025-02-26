@@ -1,0 +1,9 @@
+POST /auth/register
+Host: localhost:8000
+Content-Type: application/json
+
+{
+    "username": "Admin",
+    "password": "123456",
+    "email": "Admin@test.mail.com"
+}

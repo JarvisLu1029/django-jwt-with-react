@@ -1,0 +1,38 @@
+services:
+  django_backend:
+    build:
+      context: ./django_backend
+      dockerfile: Dockerfile
+    image: django_backend:latest
+    container_name: django_backend
+    volumes:
+      - ./django_backend/:/app
+    ports:
+      - 8000:8000
+    working_dir: /app
+    networks:
+      - web-net
+    stdin_open: true
+    tty: true
+    # command: bash -c "python manage.py runserver 0.0.0.0:80"
+
+  react_frontend:
+    build:
+      context: ./react_frontend
+      dockerfile: Dockerfile
+    image: react_frontend:latest
+    container_name: react_frontend
+    volumes:
+      - ./react_frontend/:/app
+    ports:
+      - 3000:3000
+    working_dir: /app
+    networks:
+      - web-net
+    stdin_open: true
+    tty: true
+    # command: bash -c "npm start"
+
+networks:
+  web-net:
+    driver: bridge
