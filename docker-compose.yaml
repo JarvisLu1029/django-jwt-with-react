@@ -14,7 +14,7 @@ services:
       - web-net
     stdin_open: true
     tty: true
-    # command: bash -c "python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
 
   react_frontend:
     build:
@@ -22,11 +22,11 @@ services:
       dockerfile: Dockerfile
     image: react_frontend:latest
     container_name: react_frontend
-    volumes:
-      - ./react_frontend:/app
+    # volumes:
+    #   - ./react_frontend:/app
     ports:
       - 3000:3000
-    working_dir: /app/react-app
+    working_dir: /app
     networks:
       - web-net
     stdin_open: true
