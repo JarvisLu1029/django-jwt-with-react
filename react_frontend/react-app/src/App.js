@@ -1,20 +1,23 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./components/Auth/Login";
 import RequireAuth from "./components/Auth/RequireAuth";
-import LoginForm from "./components/Auth/LoginForm";
 import UserInfo from "./components/UserInfo";
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Public routes */}
         <Route path="/login" element={<Login />} />
-        <Route path="/test" element={<LoginForm />} />
+        
+        {/* Protected routes */}
         <Route element={<RequireAuth />}>
-            <Route index element={<UserInfo />} />
+          <Route path="/" element={<UserInfo />} /> {/* Replace with your home component */}
         </Route>
-
+        
+        {/* Redirect any unknown routes */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
   );

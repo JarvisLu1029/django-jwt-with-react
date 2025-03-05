@@ -30,6 +30,17 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React development server
     "http://192.168.168.51:3000",  # React development server
 ]
+CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://192.168.168.51:3000",
+]
+
+# 設定 CSRF
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SECURE = False  # 若在 HTTPS 環境下，設為 True
+SESSION_COOKIE_SAMESITE = "None"  # 若前後端不同源，設為 "None"
+SESSION_COOKIE_SECURE = False  # 若 HTTPS，則設為 True
 
 ALLOWED_HOSTS = ['*']
 
@@ -44,6 +55,7 @@ SIMPLE_JWT = {
     "SIGNING_KEY": SECRET_KEY,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

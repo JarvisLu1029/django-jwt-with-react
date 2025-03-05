@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate, get_user_model
+from datetime import datetime, timedelta
 
 User = get_user_model()
 
@@ -40,27 +41,57 @@ def register_view(request):
 def login_view(request):
     username = request.data.get('username')
     password = request.data.get('password')
+    expires_time = datetime.now() + timedelta(days=7)  # 7 天後過期
+
     user = authenticate(username=username, password=password)
 
     if user is not None:
         refresh = RefreshToken.for_user(user)
-        return Response({
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-        })
-    return Response({'error': 'Invalid credentials'}, status=400)
+        access_token = str(refresh.access_token)
+
+        # 設置 HttpOnly Cookie 存放 refresh_token
+        response = Response({
+            "access": access_token,
+            "user_id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "role": user.role if hasattr(user, "role") else "user",
+        }, status=status.HTTP_200_OK)
+
+        response.set_cookie(
+            key="refresh_token",
+            value=str(refresh),
+            httponly=True,  # 防止 XSS
+            secure=True,  # 如設定為 False 在開發環境會無法正常傳遞
+            samesite="None",
+            max_age=7 * 24 * 60 * 60,  # 7 天
+            expires=expires_time.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
+        )
+
+        return response
+
+    return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # 登出 (讓 Token 失效)
 @api_view(['POST'])
 def logout_view(request):
     try:
-        refresh_token = request.data.get('refresh_token')  # 從請求 body 獲取 Refresh Token
+        refresh_token = request.COOKIES.get('refresh_token')
+        
+        if refresh_token is None:
+            return Response({'error': 'Refresh token not found in cookies'}, status=400)
+        
         token = RefreshToken(refresh_token)  # 創建 RefreshToken 實例
         token.blacklist()  # 加入黑名單
-
-        return Response({'message': 'Logged out successfully'})
+        
+        # 清除 Cookie
+        response = Response({'message': 'Logged out successfully'})
+        response.delete_cookie('refresh_token')
+        
+        return response
     except Exception as e:
+        print(f"Logout error: {e}")
         return Response({'error': str(e)}, status=400)
 
 
