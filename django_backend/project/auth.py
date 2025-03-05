@@ -62,8 +62,8 @@ def login_view(request):
             key="refresh_token",
             value=str(refresh),
             httponly=True,  # 防止 XSS
-            secure=True,  # 如設定為 False 在開發環境會無法正常傳遞
-            samesite="None",
+            samesite="Lax", # 在開發環境(http)用 Lax 才能正常傳遞
+            secure=False,
             max_age=7 * 24 * 60 * 60,  # 7 天
             expires=expires_time.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
         )
